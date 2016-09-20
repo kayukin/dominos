@@ -87,11 +87,13 @@ void CdominoView::OnDraw(CDC* pDC)
 	drawBackground(pDC);
 	pDC->SetBkMode(TRANSPARENT);
 	pDC->SetTextColor(RGB(255, 255, 100));
-	CRect currentName(30, 10, 120, 50), rScore(140, 10, 300, 50);
-	pDC->DrawText(pDoc->getCurrentPlayerName(), currentName, 0);
+
+	CMainFrame* p_frame = static_cast<CMainFrame*>(AfxGetApp()->m_pMainWnd);
+
+	p_frame->getStatusbar()->SetPaneText(0, pDoc->getCurrentPlayerName());
 
 	CString score = L"f:" + toString(pDoc->first_score()) + L"       s:" + toString(pDoc->second_score());
-	pDC->DrawText(score, rScore, 0);
+	//pDC->DrawText(score, rScore, 0);
 
 
 	if (dcBmp.m_hDC == nullptr)
