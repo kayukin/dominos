@@ -132,17 +132,15 @@ CString Game::getCurrentPlayerName() const
 
 void Game::pushTileLeft(Tile tile)
 {
-	if (table->empty()
-		|| (table->front().getHeadValue() == tile.getTailValue())
-		|| (table->front().getHeadValue() == tile.getHeadValue()))
+	if (table->empty() || table->front().getHeadValue() == tile.getTailValue() || table->front().getHeadValue() == tile.getHeadValue())
 	{
-		if(table->front().getHeadValue() == tile.getHeadValue())
+		if (!table->empty() && table->front().getHeadValue() == tile.getHeadValue())
 		{
 			tile.rotate();
 		}
 		table->push_front(tile);
 		currentPlayer->removeTile(tile);
-		if(!checkOver())
+		if (!checkOver())
 		{
 			changePlayer();
 		}
@@ -151,11 +149,9 @@ void Game::pushTileLeft(Tile tile)
 
 void Game::pushTileRight(Tile tile)
 {
-	if (table->empty()
-		|| (table->back().getTailValue() == tile.getHeadValue())
-		|| (table->back().getTailValue() == tile.getTailValue()))
+	if (table->empty() || table->back().getTailValue() == tile.getHeadValue() || table->back().getTailValue() == tile.getTailValue())
 	{
-		if (table->back().getTailValue() == tile.getTailValue())
+		if (!table->empty() && table->back().getTailValue() == tile.getTailValue())
 		{
 			tile.rotate();
 		}
