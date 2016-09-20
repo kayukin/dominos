@@ -16,6 +16,8 @@
 
 class CdominoApp : public CWinApp
 {
+private:
+	HANDLE hMutex;
 public:
 	CdominoApp();
 

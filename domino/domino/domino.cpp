@@ -1,4 +1,3 @@
-
 // domino.cpp : Определяет поведение классов для приложения.
 //
 
@@ -23,7 +22,7 @@ BEGIN_MESSAGE_MAP(CdominoApp, CWinApp)
 	// Стандартные команды по работе с файлами документов
 	ON_COMMAND(ID_FILE_NEW, &CWinApp::OnFileNew)
 	ON_COMMAND(ID_FILE_OPEN, &CWinApp::OnFileOpen)
-END_MESSAGE_MAP()
+	END_MESSAGE_MAP()
 
 
 // создание CdominoApp
@@ -56,6 +55,18 @@ CdominoApp theApp;
 
 BOOL CdominoApp::InitInstance()
 {
+	hMutex = ::CreateMutex(nullptr, TRUE, L"89889113 - 9A01 - 4F86 - B25D - B24B56AE920F");
+
+	switch (::GetLastError())
+	{
+	case ERROR_SUCCESS:
+		break;
+	case ERROR_ALREADY_EXISTS:
+		AfxMessageBox(L"Only one instance can be runned");
+		return FALSE;
+	default:
+		return FALSE;
+	}
 	// InitCommonControlsEx() требуются для Windows XP, если манифест
 	// приложения использует ComCtl32.dll версии 6 или более поздней версии для включения
 	// стилей отображения.  В противном случае будет возникать сбой при создании любого окна.
@@ -90,8 +101,8 @@ BOOL CdominoApp::InitInstance()
 	// Измените раздел реестра, в котором хранятся параметры
 	// TODO: следует изменить эту строку на что-нибудь подходящее,
 	// например на название организации
-	SetRegistryKey(_T("Локальные приложения, созданные с помощью мастера приложений"));
-	LoadStdProfileSettings(4);  // Загрузите стандартные параметры INI-файла (включая MRU)
+	SetRegistryKey(_T("Kayukin"));
+	LoadStdProfileSettings(4); // Загрузите стандартные параметры INI-файла (включая MRU)
 
 
 	// Зарегистрируйте шаблоны документов приложения.  Шаблоны документов
@@ -99,9 +110,9 @@ BOOL CdominoApp::InitInstance()
 	CSingleDocTemplate* pDocTemplate;
 	pDocTemplate = new CSingleDocTemplate(
 		IDR_MAINFRAME,
-		RUNTIME_CLASS(CdominoDoc),
-		RUNTIME_CLASS(CMainFrame),       // основное окно рамки SDI
-		RUNTIME_CLASS(CdominoView));
+		             RUNTIME_CLASS(CdominoDoc),
+		             RUNTIME_CLASS(CMainFrame), // основное окно рамки SDI
+		             RUNTIME_CLASS(CdominoView));
 	if (!pDocTemplate)
 		return FALSE;
 	AddDocTemplate(pDocTemplate);
@@ -152,15 +163,15 @@ class CAboutDlg : public CDialogEx
 public:
 	CAboutDlg();
 
-// Данные диалогового окна
+	// Данные диалогового окна
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_ABOUTBOX };
 #endif
 
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // поддержка DDX/DDV
+	virtual void DoDataExchange(CDataExchange* pDX); // поддержка DDX/DDV
 
-// Реализация
+	// Реализация
 protected:
 	DECLARE_MESSAGE_MAP()
 };
@@ -175,7 +186,7 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
-END_MESSAGE_MAP()
+	END_MESSAGE_MAP()
 
 // Команда приложения для запуска диалога
 void CdominoApp::OnAppAbout()
@@ -185,6 +196,3 @@ void CdominoApp::OnAppAbout()
 }
 
 // обработчики сообщений CdominoApp
-
-
-
