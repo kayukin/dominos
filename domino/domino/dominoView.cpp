@@ -42,12 +42,14 @@ CString toString(int a)
 
 CdominoView::CdominoView()
 {
-	// TODO: добавьте код создания
+	int x = 500;
+	int y = 350;
+	m_button_Stock.Create(L"Stock", WS_CHILD | WS_VISIBLE, CRect(x, y, x + 50, y + 30), this, ID_STOCK_BUTTON);
+	m_button_Pass.Create(L"Pass", WS_CHILD | WS_VISIBLE, CRect(x + 60, y, x + 50 + 60, y + 30), this, ID_PASS_BUTTON);
 	for (int i = 0; i < 7; i++)
 	{
 		bitmaps[i].LoadBitmap(IDB_BITMAP1 + i);
 	}
-	
 }
 
 CdominoView::~CdominoView()
@@ -87,7 +89,7 @@ void CdominoView::OnDraw(CDC* pDC)
 	pDC->SetTextColor(RGB(255, 255, 100));
 	CRect currentName(30, 10, 120, 50), rScore(140, 10, 300, 50);
 	pDC->DrawText(pDoc->getCurrentPlayerName(), currentName, 0);
-	
+
 	CString score = L"f:" + toString(pDoc->first_score()) + L"       s:" + toString(pDoc->second_score());
 	pDC->DrawText(score, rScore, 0);
 
@@ -189,10 +191,6 @@ void CdominoView::OnLButtonDblClk(UINT nFlags, CPoint point)
 
 void CdominoView::OnInitialUpdate()
 {
-	int x = 500;
-	int y = 350;
-	m_button_Stock.Create(L"Stock", WS_CHILD | WS_VISIBLE, CRect(x, y, x + 50, y + 30), this, ID_STOCK_BUTTON);
-	m_button_Pass.Create(L"Pass", WS_CHILD | WS_VISIBLE, CRect(x + 60, y, x + 50 + 60, y + 30), this, ID_PASS_BUTTON);
 	CView::OnInitialUpdate();
 }
 
