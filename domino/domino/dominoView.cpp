@@ -90,11 +90,8 @@ void CdominoView::OnDraw(CDC* pDC)
 
 	CMainFrame* p_frame = static_cast<CMainFrame*>(AfxGetApp()->m_pMainWnd);
 
-	p_frame->getStatusbar()->SetPaneText(0, pDoc->getCurrentPlayerName());
-
-	CString score = L"f:" + toString(pDoc->first_score()) + L"       s:" + toString(pDoc->second_score());
-	//pDC->DrawText(score, rScore, 0);
-
+	CString score = L" f:" + toString(pDoc->first_score()) + L"       s:" + toString(pDoc->second_score());
+	p_frame->getStatusbar()->SetPaneText(0, pDoc->getCurrentPlayerName() + score);
 
 	if (dcBmp.m_hDC == nullptr)
 	{
