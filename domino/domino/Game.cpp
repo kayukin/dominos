@@ -146,58 +146,56 @@ void Game::getFromStock()
 	}
 }
 
-CArchive& operator<<(CArchive& ar, const Game& game)
+void Game::Serialize(CArchive& archive)
 {
-	ar << game.current_player_index;
-	ar << game.players.size();
-	for (auto player : game.players)
+	archive << current_player_index;
+	archive << players.size();
+	for (auto player : players)
 	{
-		player.Serialize(ar);
+		player.Serialize(archive);
 	}
 	//table
-	ar << game.table->size();
-	for (auto i = game.table->begin(); i != game.table->end(); ++i)
+	archive << table->size();
+	for (auto i = table->begin(); i != table->end(); ++i)
 	{
-		ar << *i;
+		archive << *i;
 	}
 	//stock
-	ar << game.stock->size();
-	for (auto i = game.stock->begin(); i != game.stock->end(); ++i)
+	archive << stock->size();
+	for (auto i = stock->begin(); i != stock->end(); ++i)
 	{
-		ar << *i;
+		archive << *i;
 	}
-	return ar;
 }
 
-CArchive& operator>>(CArchive& ar, Game& game)
+void Game::Deserialize(CArchive& archive)
 {
-	ar >> game.current_player_index;
-	game.players.clear();
+	archive >> current_player_index;
+	players.clear();
 	size_t size;
-	ar >> size;
+	archive >> size;
 	for (size_t i = 0; i < size; ++i)
 	{
 		Player player;
-		player.Deserialize(ar);
-		game.players.push_back(player);
+		player.Deserialize(archive);
+		players.push_back(player);
 	}
 	//table
-	game.table->clear();
-	ar >> size;
+	table->clear();
+	archive >> size;
 	for (size_t i = 0; i < size; ++i)
 	{
 		Tile tile;
-		ar >> tile;
-		game.table->push_back(tile);
+		archive >> tile;
+		table->push_back(tile);
 	}
 	//stock
-	game.stock->clear();
-	ar >> size;
+	stock->clear();
+	archive >> size;
 	for (int i = 0; i < size; ++i)
 	{
 		Tile tile;
-		ar >> tile;
-		game.stock->push_back(tile);
+		archive >> tile;
+		stock->push_back(tile);
 	}
-	return ar;
 }

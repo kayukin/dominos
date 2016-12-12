@@ -38,6 +38,6 @@ public:
 		return secondScore;
 	}
 
-	friend CArchive& operator<<(CArchive& ar, const Game& game);
-	friend CArchive& operator>>(CArchive& ar, Game& game);
+	void Serialize(CArchive& ar);
+	void Deserialize(CArchive& ar);
 };

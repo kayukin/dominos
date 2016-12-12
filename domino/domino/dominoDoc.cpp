@@ -95,11 +95,11 @@ void CdominoDoc::Serialize(CArchive& ar)
 {
 	if (ar.IsStoring())
 	{
-		ar << *game;
+		game->Serialize(ar);
 	}
 	else
 	{
-		ar >> *game;
+		game->Deserialize(ar);
 	}
 }
 
