@@ -47,6 +47,7 @@ public:
 	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
 	virtual void OnInitialUpdate();
 	void OnStockBtn();
+	virtual BOOL Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext = NULL);
 };
 
 #ifndef _DEBUG  // отладочная версия в dominoView.cpp

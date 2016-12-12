@@ -32,7 +32,6 @@ BEGIN_MESSAGE_MAP(CdominoView, CView)
 	ON_BN_CLICKED(ID_STOCK_BUTTON, OnStockBtn)
 	END_MESSAGE_MAP()
 
-// создание/уничтожение CdominoView
 CString toString(int a)
 {
 	CString str;
@@ -41,11 +40,7 @@ CString toString(int a)
 }
 
 CdominoView::CdominoView()
-{
-	int x = 500;
-	int y = 350;
-	m_button_Stock.Create(L"Stock", WS_CHILD | WS_VISIBLE, CRect(x, y, x + 50, y + 30), this, ID_STOCK_BUTTON);
-	m_button_Pass.Create(L"Pass", WS_CHILD | WS_VISIBLE, CRect(x + 60, y, x + 50 + 60, y + 30), this, ID_PASS_BUTTON);
+{	
 	for (int i = 0; i < 7; i++)
 	{
 		bitmaps[i].LoadBitmap(IDB_BITMAP1 + i);
@@ -90,7 +85,7 @@ void CdominoView::OnDraw(CDC* pDC)
 
 	CMainFrame* p_frame = static_cast<CMainFrame*>(AfxGetApp()->m_pMainWnd);
 
-	CString score = L" f:" + toString(pDoc->first_score()) + L"       s:" + toString(pDoc->second_score());
+	CString score = L"\tf:" + toString(pDoc->first_score()) + L"       s:" + toString(pDoc->second_score());
 	p_frame->getStatusbar()->SetPaneText(0, pDoc->getCurrentPlayerName() + score);
 
 	if (dcBmp.m_hDC == nullptr)
@@ -190,6 +185,10 @@ void CdominoView::OnLButtonDblClk(UINT nFlags, CPoint point)
 
 void CdominoView::OnInitialUpdate()
 {
+	int x = 300;
+	int y = 500;
+	m_button_Stock.Create(L"Stock", WS_CHILD | WS_VISIBLE, CRect(x, y, x + 50, y + 30), this, ID_STOCK_BUTTON);
+	m_button_Pass.Create(L"Pass", WS_CHILD | WS_VISIBLE, CRect(x + 60, y, x + 50 + 60, y + 30), this, ID_PASS_BUTTON);
 	CView::OnInitialUpdate();
 }
 
@@ -200,4 +199,12 @@ void CdominoView::OnStockBtn()
 	if (!pDoc)
 		return;
 	pDoc->getFromStock();
+}
+
+
+BOOL CdominoView::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext)
+{
+	// TODO: добавьте специализированный код или вызов базового класса
+	
+	return CView::Create(lpszClassName, lpszWindowName, dwStyle, rect, pParentWnd, nID, pContext);
 }
