@@ -4,27 +4,20 @@
 
 void Game::changePlayer()
 {
-	if (currentPlayer == firstPlayer)
-	{
-		currentPlayer = secondPlayer;
-	}
-	else
-	{
-		currentPlayer = firstPlayer;
-	}
+	current_player_index = (current_player_index + 1) % players.size();
 }
 
 bool Game::checkOver()
 {
 	bool gameOver = false;
-	if (currentPlayer->getTiles()->empty())
+	if (players[current_player_index].getTiles()->empty())
 	{
 		gameOver = true;
 	}
 	else
 	{
 		bool hasCompatible = false;
-		for (auto i = currentPlayer->getTiles()->begin(); i != currentPlayer->getTiles()->end(); ++i)
+		for (auto i = players[current_player_index].getTiles()->begin(); i != players[current_player_index].getTiles()->end(); ++i)
 		{
 			hasCompatible = hasCompatible || i->getHeadValue() == table->back().getTailValue() || i->getTailValue() == table->back().getTailValue();
 			hasCompatible = hasCompatible || i->getHeadValue() == table->front().getHeadValue() || i->getTailValue() == table->front().getHeadValue();
@@ -44,30 +37,7 @@ bool Game::checkOver()
 
 void Game::countScores()
 {
-	if (currentPlayer == firstPlayer)
-	{
-		while (!stock->empty())
-		{
-			secondPlayer->addTile(stock->back());
-			stock->pop_back();
-		}
-		for (auto i = secondPlayer->getTiles()->begin(); i != secondPlayer->getTiles()->end(); ++i)
-		{
-			firstScore += i->getWeight();
-		}
-	}
-	else
-	{
-		while (!stock->empty())
-		{
-			firstPlayer->addTile(stock->back());
-			stock->pop_back();
-		}
-		for (auto i = firstPlayer->getTiles()->begin(); i != firstPlayer->getTiles()->end(); ++i)
-		{
-			secondScore += i->getWeight();
-		}
-	}
+	
 }
 
 void Game::newRound()
@@ -75,7 +45,12 @@ void Game::newRound()
 	static int roundnumber;
 	roundnumber++;
 	AfxMessageBox(L"Next Round");
-	table->clear();
+	clear();
+	init();
+}
+
+void Game::init()
+{
 	vector<Tile> tiles = Tile::createTiles();
 	vector<Tile> first, second;
 	for (int i = 0; i < 6; i++)
@@ -86,48 +61,40 @@ void Game::newRound()
 		tiles.pop_back();
 	}
 	stock = new vector<Tile>(tiles);
-	delete firstPlayer;
-	delete secondPlayer;
-	firstPlayer = new Player(first, L"First");
-	secondPlayer = new Player(second, L"Second");
-	currentPlayer = firstPlayer;
+	Player first_player(first, L"First");
+	Player second_player(second, L"Second");
+
+	players.push_back(first_player);
+	players.push_back(second_player);
+	current_player_index = 0;
+	table = new deque<Tile>();
 }
 
 Game::Game()
 {
-	vector<Tile> tiles = Tile::createTiles();
-	vector<Tile> first, second;
-	for (int i = 0; i < 6; i++)
-	{
-		first.push_back(tiles.back());
-		tiles.pop_back();
-		second.push_back(tiles.back());
-		tiles.pop_back();
-	}
-	stock = new vector<Tile>(tiles);
-	firstPlayer = new Player(first, L"First");
-	secondPlayer = new Player(second, L"Second");
-	currentPlayer = firstPlayer;
-	table = new deque<Tile>();
+	init();
 }
 
 
-Game::~Game()
+void Game::clear()
 {
-	delete firstPlayer;
-	delete secondPlayer;
 	delete table;
 	delete stock;
 }
 
+Game::~Game()
+{
+	clear();
+}
+
 const vector<Tile>* Game::getCurrentPlayerTiles() const
 {
-	return currentPlayer->getTiles();
+	return players[current_player_index].getTiles();
 }
 
 CString Game::getCurrentPlayerName() const
 {
-	return currentPlayer->getName();
+	return players[current_player_index].getName();
 }
 
 void Game::pushTileLeft(Tile tile)
@@ -139,7 +106,7 @@ void Game::pushTileLeft(Tile tile)
 			tile.rotate();
 		}
 		table->push_front(tile);
-		currentPlayer->removeTile(tile);
+		players[current_player_index].removeTile(tile);
 		if (!checkOver())
 		{
 			changePlayer();
@@ -156,7 +123,7 @@ void Game::pushTileRight(Tile tile)
 			tile.rotate();
 		}
 		table->push_back(tile);
-		currentPlayer->removeTile(tile);
+		players[current_player_index].removeTile(tile);
 		if (!checkOver())
 		{
 			changePlayer();
@@ -175,62 +142,60 @@ void Game::getFromStock()
 	{
 		Tile tile = stock->back();
 		stock->pop_back();
-		currentPlayer->addTile(tile);
+		players[current_player_index].addTile(tile);
 	}
 }
 
-CArchive& operator<<(CArchive& ar, const Game& game)
+void Game::Serialize(CArchive& archive)
 {
-	ar << *game.firstPlayer;
-	ar << *game.secondPlayer;
-	ar << game.currentPlayer->getName();
-	//table
-	ar << game.table->size();
-	for (auto i = game.table->begin(); i != game.table->end(); ++i)
+	archive << current_player_index;
+	archive << players.size();
+	for (auto player : players)
 	{
-		ar << *i;
+		player.Serialize(archive);
+	}
+	//table
+	archive << table->size();
+	for (auto i = table->begin(); i != table->end(); ++i)
+	{
+		archive << *i;
 	}
 	//stock
-	ar << game.stock->size();
-	for (auto i = game.stock->begin(); i != game.stock->end(); ++i)
+	archive << stock->size();
+	for (auto i = stock->begin(); i != stock->end(); ++i)
 	{
-		ar << *i;
+		archive << *i;
 	}
-	return ar;
 }
 
-CArchive& operator>>(CArchive& ar, Game& game)
+void Game::Deserialize(CArchive& archive)
 {
-	ar >> *game.firstPlayer;
-	ar >> *game.secondPlayer;
-	CString currentPlayerName;
-	ar >> currentPlayerName;
-	if (!game.firstPlayer->getName().Compare(currentPlayerName))
+	archive >> current_player_index;
+	players.clear();
+	size_t size;
+	archive >> size;
+	for (size_t i = 0; i < size; ++i)
 	{
-		game.currentPlayer = game.firstPlayer;
-	}
-	else
-	{
-		game.currentPlayer = game.secondPlayer;
+		Player player;
+		player.Deserialize(archive);
+		players.push_back(player);
 	}
 	//table
-	game.table->clear();
-	int size;
-	ar >> size;
-	for (int i = 0; i < size; ++i)
+	table->clear();
+	archive >> size;
+	for (size_t i = 0; i < size; ++i)
 	{
 		Tile tile;
-		ar >> tile;
-		game.table->push_back(tile);
+		archive >> tile;
+		table->push_back(tile);
 	}
 	//stock
-	game.stock->clear();
-	ar >> size;
+	stock->clear();
+	archive >> size;
 	for (int i = 0; i < size; ++i)
 	{
 		Tile tile;
-		ar >> tile;
-		game.stock->push_back(tile);
+		archive >> tile;
+		stock->push_back(tile);
 	}
-	return ar;
 }

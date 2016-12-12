@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "Tile.h"
-
+#include <random>
 
 
 Tile::Tile(int headValue, int tailValue)
@@ -31,7 +31,8 @@ bool Tile::isDouble() const
 
 vector<Tile> Tile::createTiles()
 {
-	srand(unsigned(time(0)));
+	std::random_device rd;
+	std::mt19937 g(rd());
 	vector<Tile> tiles;
 	for (int i = 0; i <= 6; i++)
 	{
@@ -40,7 +41,7 @@ vector<Tile> Tile::createTiles()
 			tiles.push_back(Tile(i, j));
 		}
 	}
-	random_shuffle(tiles.begin(), tiles.end());
+	shuffle(tiles.begin(), tiles.end(), g);
 	return tiles;
 }
 

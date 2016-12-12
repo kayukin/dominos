@@ -1,10 +1,5 @@
-// dominoDoc.h : интерфейс класса CdominoDoc
-//
-#include "Game.h"
-
-
 #pragma once
-
+#include "Game.h"
 
 class CdominoDoc : public CDocument
 {
