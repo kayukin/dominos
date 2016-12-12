@@ -7,6 +7,7 @@ class Player
 	vector<Tile>* hand;
 public:
 	Player(const vector<Tile>& tiles, CString name);
+	Player() :Player(vector<Tile>(), L"") {}
 	~Player();
 	const vector<Tile>* getTiles() const;
 	void removeTile(const Tile& tile);

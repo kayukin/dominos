@@ -4,20 +4,21 @@
 
 class Game : public CObject
 {
-	Player* firstPlayer;
 	int firstScore = 0;
 	int secondScore = 0;
-	Player* secondPlayer;
+	vector<Player> players;
 	deque<Tile>* table;
 	vector<Tile>* stock;
-	Player* currentPlayer;
+	size_t current_player_index;
 	void changePlayer();
 	bool gameOver = false;
 	bool checkOver();
 	void countScores();
 	void newRound();
+	void init();
 public:
 	Game();
+	void clear();
 	~Game();
 	const vector<Tile>* getCurrentPlayerTiles() const;
 	CString getCurrentPlayerName() const;

@@ -33,7 +33,10 @@ CdominoDoc::CdominoDoc(): game(nullptr)
 
 CdominoDoc::~CdominoDoc()
 {
-	delete game;
+	if (game != nullptr)
+	{
+		delete game;
+	}
 }
 
 const vector<Tile>* CdominoDoc::getCurrentPlayerTiles() const
