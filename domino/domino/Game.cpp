@@ -62,7 +62,7 @@ void Game::init()
 	}
 	stock = new vector<Tile>(tiles);
 	Player first_player(first, L"First");
-	Player second_player(first, L"Second");
+	Player second_player(second, L"Second");
 
 	players.push_back(first_player);
 	players.push_back(second_player);
@@ -152,7 +152,7 @@ CArchive& operator<<(CArchive& ar, const Game& game)
 	ar << game.players.size();
 	for (auto player : game.players)
 	{
-		ar << player;
+		player.Serialize(ar);
 	}
 	//table
 	ar << game.table->size();
@@ -178,7 +178,7 @@ CArchive& operator>>(CArchive& ar, Game& game)
 	for (size_t i = 0; i < size; ++i)
 	{
 		Player player;
-		ar >> player;
+		player.Deserialize(ar);
 		game.players.push_back(player);
 	}
 	//table

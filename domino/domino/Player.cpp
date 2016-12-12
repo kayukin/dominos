@@ -4,24 +4,23 @@
 
 Player::Player(const vector<Tile>& tiles, CString the_name)
 {
-	hand = new vector<Tile>(tiles);
 	name = the_name;
+	hand = tiles;
 }
 
 
 Player::~Player()
 {
-	delete hand;
 }
 
 const vector<Tile>* Player::getTiles() const
 {
-	return hand;
+	return &hand;
 }
 
 void Player::removeTile(const Tile& tile)
 {
-	hand->erase(remove(hand->begin(), hand->end(), tile), hand->end());
+	hand.erase(remove(hand.begin(), hand.end(), tile), hand.end());
 }
 
 CString Player::getName() const
@@ -31,31 +30,29 @@ CString Player::getName() const
 
 void Player::addTile(const Tile& tile)
 {
-	hand->push_back(tile);
+	hand.push_back(tile);
 }
 
-CArchive& operator<<(CArchive& ar, const Player& player)
+void Player::Serialize(CArchive& archive)
 {
-	ar << player.name;
-	ar << player.hand->size();
-	for (auto i = player.hand->begin(); i != player.hand->end(); ++i)
+	archive << name;
+	archive << hand.size();
+	for (auto i = hand.begin(); i != hand.end(); ++i)
 	{
-		ar << *i;
+		archive << *i;
 	}
-	return ar;
 }
 
-CArchive& operator>>(CArchive& ar, Player& player)
+void Player::Deserialize(CArchive& archive)
 {
-	ar >> player.name;
-	player.hand->clear();
-	int size;
-	ar >> size;
+	archive >> name;
+	hand.clear();
+	size_t size;
+	archive >> size;
 	for (int i = 0; i < size; ++i)
 	{
 		Tile tile;
-		ar >> tile;
-		player.hand->push_back(tile);
+		archive >> tile;
+		hand.push_back(tile);
 	}
-	return ar;
 }
